@@ -47,13 +47,13 @@ ball_group=pygame.sprite.OrderedUpdates(balls)
 power_ups=[]
 power_up_group=pygame.sprite.OrderedUpdates(power_ups)
 
-map_outline=pygame.Surface((516, 388)).convert()
-map_outline.fill((124,124,124))   
+board_outline=pygame.Surface((516, 388)).convert()
+board_outline.fill((124,124,124))   
 
-maps=[]
+boards=[]
 for i in range(1,4):
-    new_map_img=pygame.image.load("map_{}.bmp".format(i)).convert()
-    maps+=[new_map_img]
+    new_board_img=pygame.image.load("map_{}.bmp".format(i)).convert()
+    boards+=[new_board_img]
 
 p1_left=False
 p1_right=False
@@ -92,12 +92,12 @@ button_expanded_box.set_colorkey((255,0,255))
 
 #Defines main menu variables
 rules_button=classes.Button("Rules", 530, 50, menu_font, img_dirr)
-map_button=classes.Button("Map", 530, 100, menu_font, img_dirr)
+board_button=classes.Button("Board", 530, 100, menu_font, img_dirr)
 time_button=classes.Button("Time", 530, 150, menu_font, img_dirr)
 controls_button=classes.Button("Controls", 530, 200, menu_font, img_dirr)
-advanced_button=classes.Button("Advanced", 530, 250, menu_font, img_dirr)
+settings_button=classes.Button("Settings", 530, 250, menu_font, img_dirr)
 start_game_button=classes.Button("Start Game", 530, 300, menu_font, img_dirr)
-map_num=0
+board_num=0
 match_time=180
 
 less_time_arrow_rect=left_arrow.get_rect()
@@ -116,10 +116,11 @@ more_time_arrow_rect.top=time_button.rect.top+5
 rules_text_1=menu_font.render("This is a 2 player game where the goal is to outlast the other player. ", True, (0,0,0))
 rules_text_2=menu_font.render("To stay alive, a player must keep at least 1 of their balls in play at all times. ", True, (0,0,0))
 rules_text_3=menu_font.render("If a friendly ball passes your paddle, it is considered out of play.", True, (0,0,0))
-rules_text_4=menu_font.render("If a Block is hit with a ball, it will break. When broken, some Blocks ", True, (0,0,0))
-rules_text_5=menu_font.render("will drop a Power-Up. Power-Ups will fall towards whoever broke their Block.", True, (0,0,0))
-rules_text_6=menu_font.render("The colour of a ball will show which player controls it. ", True, (0,0,0))
-rules_text_7=menu_font.render("If a player hits an enemy ball, they will be eliminated.", True, (0,0,0))
+rules_text_4=menu_font.render("If a Block is hit with a ball, it will break. If a Block has a symbol on it,", True, (0,0,0))
+rules_text_5=menu_font.render("it will drop a Power-Up when broken. Power-Ups will fall towards ", True, (0,0,0))
+rules_text_6=menu_font.render("whoever set them free, and activate an effect if picked up.", True, (0,0,0))
+rules_text_7=menu_font.render("The colour of a ball will show which player controls it. ", True, (0,0,0))
+rules_text_8=menu_font.render("If a player hits an enemy ball, they will be eliminated.", True, (0,0,0))
 
 rules_back_button_rect=back_button.get_rect()
 rules_back_button_rect.left=530
@@ -182,9 +183,9 @@ entering_key=False
 bound_keys=[97, 100, 276, 275, -1]
 
 
-#Defines advanced options menu objects
+#Defines settings menu objects
 tie_breaker_text=menu_font.render("Time Limit:", True, (0,0,0))
-tie_breaker=False
+tie_breaker=True
 tie_breaker_box_unchecked=pygame.image.load("check_box_empty.bmp").convert()
 tie_breaker_box_unchecked.set_colorkey((255,0,255))
 tie_breaker_box_checked=pygame.image.load("check_box_checked.bmp").convert()
@@ -268,9 +269,9 @@ random_types_box_rect.left=520
 random_types_box_rect.top=250
 random_respawn_types=False
 
-advanced_back_button_rect=back_button.get_rect()
-advanced_back_button_rect.left=530
-advanced_back_button_rect.top=440
+settings_back_button_rect=back_button.get_rect()
+settings_back_button_rect.left=530
+settings_back_button_rect.top=440
 
 
 #Creates the box that displays the winner
@@ -288,7 +289,7 @@ update_time_left_counter=0
 clicked=False
 
 in_game=False
-create_map=False
+create_board=False
 
 current_menu="setup_match_multi"
 game_over=False
@@ -358,11 +359,11 @@ while keep_going:
                 current_menu="rules_menu"
                 clicked=False
             
-            collisions=mouse.rect.colliderect(map_button.rect)
+            collisions=mouse.rect.colliderect(board_button.rect)
             if collisions==1 and clicked==True:
-                map_num+=1
-                if map_num==len(maps):
-                    map_num=0
+                board_num+=1
+                if board_num==len(boards):
+                    board_num=0
                 clicked=False
                 
             collisions=mouse.rect.colliderect(less_time_arrow_rect)
@@ -380,30 +381,30 @@ while keep_going:
                 clicked=False
                 current_menu="controls_rebind_2_players"
                 
-            collisions=mouse.rect.colliderect(advanced_button.rect)
+            collisions=mouse.rect.colliderect(settings_button.rect)
             if collisions==1 and clicked==True:
                 clicked=False
-                current_menu="advanced_setup"
+                current_menu="setings_menu"
                 
             collisions=mouse.rect.colliderect(start_game_button.rect)
             if collisions==1 and clicked==True:
-                create_map=True
+                create_board=True
                 clicked=False
                 
             match_time_text=menu_font.render("{}:{:0>2}".format(int(match_time/60), int(match_time)-(int(match_time/60)*60)), True, (0,0,0))
             
             background.blit(rules_button.image, rules_button.rect)             
-            background.blit(map_button.image, map_button.rect) 
+            background.blit(board_button.image, board_button.rect) 
             background.blit(time_button.image, time_button.rect)
             background.blit(left_arrow, less_time_arrow_rect)
             background.blit(right_arrow, more_time_arrow_rect)         
             background.blit(button_expanded_box, (time_button.rect.left+10, time_button.rect.bottom))
             background.blit(match_time_text, (time_button.rect.left+32, time_button.rect.bottom))
             background.blit(controls_button.image, controls_button.rect)  
-            background.blit(advanced_button.image, advanced_button.rect)  
+            background.blit(settings_button.image, settings_button.rect)  
             background.blit(start_game_button.image, start_game_button.rect) 
-            background.blit(map_outline, (3,3))       
-            background.blit(maps[map_num], (5,5))
+            background.blit(board_outline, (3,3))       
+            background.blit(boards[board_num], (5,5))
             
             
         ##
@@ -425,8 +426,9 @@ while keep_going:
             background.blit(rules_text_3, (40, 100)) 
             background.blit(rules_text_4, (40, 130)) 
             background.blit(rules_text_5, (40, 150)) 
-            background.blit(rules_text_6, (40, 180)) 
-            background.blit(rules_text_7, (40, 210)) 
+            background.blit(rules_text_6, (40, 170)) 
+            background.blit(rules_text_7, (40, 200)) 
+            background.blit(rules_text_8, (40, 230)) 
             
             
             
@@ -501,8 +503,8 @@ while keep_going:
                 background.blit(entering_key_filter, (0, 0))   
                 background.blit(press_a_key_text, (int(size[0]/2-press_a_key_text.get_size()[0]/2), int(size[1]/2-press_a_key_text.get_size()[1]/2)))   
                 
-        #If the player is in the advanced options menu
-        if current_menu=="advanced_setup":
+        #If the player is in the settings menu
+        if current_menu=="setings_menu":
             
             collisions=mouse.rect.colliderect(tie_breaker_box_rect)
             if collisions==1 and clicked==True:
@@ -551,7 +553,7 @@ while keep_going:
                 clicked=False
                 
             #Returns the player to the setup match menu
-            collisions=mouse.rect.colliderect(advanced_back_button_rect)
+            collisions=mouse.rect.colliderect(settings_back_button_rect)
             if collisions==1 and clicked==True:
                 current_menu="setup_match_multi"
                 clicked=False
@@ -607,7 +609,7 @@ while keep_going:
             if blocks_respawn==False:
                 background.blit(blocks_respawn_box_unchecked, blocks_respawn_box_rect)
                 
-            background.blit(back_button, advanced_back_button_rect)
+            background.blit(back_button, settings_back_button_rect)
                 
                 
         #If the player is currently looking at You Win screen
@@ -615,7 +617,7 @@ while keep_going:
             
             collisions=mouse.rect.colliderect(play_again_button.rect)
             if collisions==1 and clicked==True:
-                create_map=True              
+                create_board=True              
                 clicked=False
                 
             collisions=mouse.rect.colliderect(setup_from_win_button.rect)
@@ -637,7 +639,7 @@ while keep_going:
             background.blit(play_again_button.image, play_again_button.rect)
             background.blit(setup_from_win_button.image, setup_from_win_button.rect)
          
-    if create_map==True:
+    if create_board==True:
         in_game=True
         time_left=match_time
         
@@ -649,11 +651,11 @@ while keep_going:
         if respawn_frequency_level==3:
             respawn_frequency_time=20
         
-        #Creates the chosen map
-        create_map=False
+        #Creates the chosen board
+        create_board=False
         tiles=[]
             
-        if map_num==0:
+        if board_num==0:
             for i in range(0,112):
                 if i<16 or i>=96:
                     tile_type="None"
@@ -680,7 +682,7 @@ while keep_going:
                 if tile_type=="Metal":
                     tiles+=[classes.Tile(i*40-int(i/16)*640, int(i/16)*15+188, tile_type, hits_to_distroy, img_dirr)]
                 
-        if map_num==1:
+        if board_num==1:
             for i in range(0,176):
                 if i<16 or i>=160:
                     tile_type="None"
@@ -707,7 +709,7 @@ while keep_going:
                 if tile_type=="Metal":
                     tiles+=[classes.Tile(i*40-int(i/16)*640, int(i/16)*15+157, tile_type, hits_to_distroy, img_dirr)]
                 
-        if map_num==2:
+        if board_num==2:
             for i in range(0,176):
                 if i<80 or i>=96:
                     tile_type="Fire_5_balls"
