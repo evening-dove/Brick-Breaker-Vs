@@ -8,6 +8,6 @@ To run this game, you must have Python 3.2 You must also have Pygame 1.9.2 insta
 
 Uses graphical elements and responds to mouse inputs on the menus, and responds to keyboard inputs during matches.
 
-For specific instructions on how to play the game, please consult the in game "Rules" and "Controls" menus.
+For specific instructions on how to play the game, please consult the in game "Rules" and "Settings" menus.
 
 -Bryan Travers
